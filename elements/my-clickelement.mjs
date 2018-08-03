@@ -1,10 +1,5 @@
-import afuncstring2func from './helpers/arrow-function-string-to-function.mjs'
-
-import ("./index.mjs").then((Module) => {
-
-    const {
-        MyBaseElement
-    } = Module
+import {afuncstring2func} from '../helpers/arrow-function-string-to-function.mjs'
+import { MyBaseElement , html } from "../index.mjs"
 
     class MyComponent extends MyBaseElement {
         constructor() {
@@ -27,6 +22,7 @@ import ("./index.mjs").then((Module) => {
         onClick(event) {
             if (!event.path[0].attributes['onclick']) return 
             var comingFunc = event.path[0].attributes['onclick'].value
+            console.log("COMING", comingFunc)
             afuncstring2func(comingFunc, this)
         }
 
@@ -47,8 +43,8 @@ import ("./index.mjs").then((Module) => {
             console.log(`${MyComponent.is} connected with the DOM`)
         }
 
-        helloMars(planetColor, planet) {
-            this.setState({planetColor, planet})
+        helloMars(planet, planetColor) {
+            this.setState({planet, planetColor})
         }
 
         get style() {
@@ -69,7 +65,7 @@ import ("./index.mjs").then((Module) => {
         }
 
         get template() {
-            return `
+            return html`
             <div>
                 <span class="black">${this.state.greetings}</span>
                 <span class="${this.state.planetColor?this.state.planetColor:'blue'}">${this.state.planet}</span>
@@ -83,4 +79,3 @@ import ("./index.mjs").then((Module) => {
 
     }
     MyBaseElement.define( MyComponent.is, MyComponent)
-})

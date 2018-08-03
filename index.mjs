@@ -52,6 +52,7 @@ class MyBaseElement extends HTMLElement {
     /* End of Implementation. */
   
     eventHandler (event) {
+      console.log("before")
       this.onEvent(event)
       switch (event.type) {
         case 'click':
@@ -72,6 +73,7 @@ class MyBaseElement extends HTMLElement {
       var oldAddEventListener = EventTarget.prototype.addEventListener
   
       EventTarget.prototype.addEventListener = function (eventName, eventHandler) {
+        
         oldAddEventListener.call(this, eventName, function (event) {
           let eventNameCapitalized = `on${eventName.replace(/^\w/, c => c.toUpperCase())}`
           if (typeof this[eventNameCapitalized] === 'function') this[eventNameCapitalized](event)
@@ -80,6 +82,7 @@ class MyBaseElement extends HTMLElement {
       }
   
       this.constructor.observedEvents.forEach(element => {
+        
         this.addEventListener(element)
       })
     }
