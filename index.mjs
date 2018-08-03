@@ -42,7 +42,7 @@ class MyBaseElement extends HTMLElement {
   
     // Events
     onState () { /* Called when state changes (state). */ }
-    onEvent () { /* Called when state changes (event). */ }
+    onEvent () { /* Called when browser event is dispatched (event). */ }
     onChange () { /* Called when attribute change (attrName, oldVal, newVal). */ }
   
     // Rendering
@@ -101,7 +101,6 @@ class MyBaseElement extends HTMLElement {
     }
   
     attributeChangedCallback (attrName, oldVal, newVal) {
-      console.log(attrName, oldVal, newVal)
       const attrs = {}
       attrs[attrName] = newVal
       this.setState(attrs)
