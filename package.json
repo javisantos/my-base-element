@@ -1,0 +1,8 @@
+{
+  "name": "my-base-element",
+  "version": "1.0.0",
+  "description": "An extensible base element to create you own custom elements.",
+  "main": "index.js",
+  "author": "Javi Santos <mail@javisantos.com>",
+  "license": "MIT"
+}
