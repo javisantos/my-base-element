@@ -18,10 +18,10 @@ const MYBASEELEMENT_BUNDLE= {
 };
 
 const MYCLICKELEMENT_BUNDLE= {
-	input: 'elements/my-clickelement.mjs',
+	input: 'elements/my-click-base-element.mjs',
 	output: {
 		name: "myClickElement",
-		file: 'public/elements/my-clickelement.mjs',
+		file: 'public/elements/my-click-base-element.mjs',
 		format: 'iife', // immediately-invoked function expression — suitable for <script> tags
 		sourcemap: true
 	}

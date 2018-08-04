@@ -1,4 +1,4 @@
-/* global HTMLElement customElements EventTarget */
+/* global HTMLElement customElements  */
 class MyBaseElement extends HTMLElement {
   constructor () {
     super()
@@ -25,7 +25,7 @@ class MyBaseElement extends HTMLElement {
       console.log(err)
       const h3 = document.createElement('h3')
       h3.innerHTML = "This site uses webcomponents which don't work in all browsers! Try this site in a browser that supports them!"
-      document.body.innerHTML(h3)
+      document.body.appendChild(h3)
     }
   }
 
@@ -49,7 +49,6 @@ class MyBaseElement extends HTMLElement {
 
   // Events
   onState () { /* Called when state changes (state). */ }
-  onEvent () { /* Called when browser event is dispatched (event). */ }
   onChange () { /* Called when attribute change (attrName, oldVal, newVal). */ }
 
   // Rendering
@@ -63,7 +62,6 @@ class MyBaseElement extends HTMLElement {
   /* End of Implementation. */
 
   eventHandler (event) {
-    this.onEvent(event)
     switch (event.type) {
       case 'click':
         break
@@ -78,21 +76,19 @@ class MyBaseElement extends HTMLElement {
     this.connected()
     this.loaded = true
 
-    if (this.source) this.initEventSource()
+    // var oldAddEventListener = EventTarget.prototype.addEventListener
 
-    var oldAddEventListener = EventTarget.prototype.addEventListener
+    // EventTarget.prototype.addEventListener = function (eventName, eventHandler) {
+    //   oldAddEventListener.call(this, eventName, function (event) {
+    //     let eventNameCapitalized = `on${eventName.replace(/^\w/, c => c.toUpperCase())}`
+    //     if (typeof this[eventNameCapitalized] === 'function') this[eventNameCapitalized](event)
+    //     this.eventHandler(event)
+    //   })
+    // }
 
-    EventTarget.prototype.addEventListener = function (eventName, eventHandler) {
-      oldAddEventListener.call(this, eventName, function (event) {
-        let eventNameCapitalized = `on${eventName.replace(/^\w/, c => c.toUpperCase())}`
-        if (typeof this[eventNameCapitalized] === 'function') this[eventNameCapitalized](event)
-        this.eventHandler(event)
-      })
-    }
-
-    this.constructor.observedEvents.forEach(element => {
-      this.addEventListener(element)
-    })
+  // this.constructor.observedEvents.forEach(element => {
+  //   this.addEventListener(element)
+  // })
   }
 
   disconnectedCallback () {
@@ -105,6 +101,9 @@ class MyBaseElement extends HTMLElement {
   }
 
   setState (data, shouldRender) {
+    Object.entries(data).forEach((attr) => {
+      this.setAttribute(attr[0], attr[1])
+    })
     const newState = Object.assign({}, this.state, data)
     this.state = newState
     this.onState(this.state)
@@ -114,7 +113,7 @@ class MyBaseElement extends HTMLElement {
   attributeChangedCallback (attrName, oldVal, newVal) {
     const attrs = {}
     attrs[attrName] = newVal
-    this.setState(attrs)
+    if (oldVal !== newVal) this.setState(attrs)
     this.onChange(attrName, oldVal, newVal)
   }
 }
@@ -155,11 +154,27 @@ const execute = (stringFunction, context) => {
     }, {})
   var argsObject = Object.keys(argsToObject).map((k) => argsToObject[k])
   if (typeof context[funcName] === 'function') {
-    return context[funcName](...argsObject.reverse())
+    return context[funcName](...argsObject)
   } else {
     throw new Error(`The function ${funcName} in not defined.`)
   }
 }
 
-const helpers = {execute}
+const getTarget = (event, id) => {
+  event = event || window.event
+  var e = { event: event,
+    target: event.path ? event.path.find((each) => {
+      return each.id === id
+    }) : event.target
+  }
+  return e
+}
+
+const clickTarget = (event, id, context) => {
+  var e = getTarget(event, id)
+  var stringFunction = e.target.attributes['onclick'].value
+  execute(stringFunction, context)
+}
+
+const helpers = {execute, getTarget, clickTarget}
 export { MyBaseElement, html, helpers }
